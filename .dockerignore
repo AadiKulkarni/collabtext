@@ -1,0 +1,8 @@
+# Fly.io / Render style ignore for the server image context
+node_modules
+**/node_modules
+**/dist
+.git
+docs
+*.md
+packages/client/dist
