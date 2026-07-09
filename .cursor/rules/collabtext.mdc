@@ -1,0 +1,49 @@
+---
+description: CollabText project rules
+alwaysApply: true
+---
+
+# CollabText — project rules
+
+This is a from-scratch CRDT-based collaborative text editor, built as a
+portfolio project to demonstrate real systems/algorithms depth for SWE
+internship recruiting. Every design decision must be defensible in a
+technical interview — favor explicit, correct, well-tested code over
+clever or terse code.
+
+## Hard constraints
+
+- NEVER use an existing CRDT library (Yjs, Automerge, ShareDB, etc.) for
+  the core algorithm in packages/crdt. The entire point of this project
+  is implementing the CRDT from scratch. You may use libraries for
+  networking (ws), UI (React), and testing (vitest, fast-check).
+- packages/crdt must have ZERO dependencies on networking or UI code.
+  It should be importable and fully testable in complete isolation.
+- Every function in packages/crdt must have a doc comment explaining
+  WHY, not just what — e.g. why Lamport clocks instead of wall-clock
+  timestamps, why tombstones instead of physical deletion.
+- Do not implement a feature before its tests. When asked to build a
+  phase, write the test file's structure and key test cases FIRST,
+  confirm them with me, then implement.
+- Do not silently expand scope. If you think a feature needs something
+  not specified in the current prompt (e.g. authentication, multiple
+  documents, rich text formatting), stop and ask rather than adding it.
+- Prefer TypeScript strict mode. No `any` types without a comment
+  explaining why it's unavoidable.
+- Every package needs its own README-level header comment explaining
+  its responsibility in one paragraph.
+
+## Stack
+
+- Monorepo via pnpm workspaces
+- packages/crdt: TypeScript, zero runtime deps, vitest + fast-check for tests
+- packages/server: Node.js, TypeScript, `ws` for WebSocket, vitest
+- packages/client: React, TypeScript, vitest + React Testing Library
+
+## Code style
+
+- Explicit over clever. This code will be read line-by-line in
+  interviews — prioritize a reader understanding WHY a line exists.
+- Small, single-responsibility functions over large ones.
+- Commit-sized changes: when asked to implement a phase, structure the
+  work so it could be committed as 2-4 logical commits, not one dump.

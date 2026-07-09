@@ -1,0 +1,33 @@
+{
+  "name": "collabtext",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "CRDT-based collaborative text editor monorepo",
+  "scripts": {
+    "test": "pnpm -r run test",
+    "lint": "eslint --no-error-on-unmatched-pattern \"packages/*/src/**/*.{ts,tsx}\" \"packages/*/test/**/*.{ts,tsx}\"",
+    "build": "pnpm -r run build",
+    "dev:server": "pnpm --filter @collabtext/server dev",
+    "dev:client": "pnpm --filter @collabtext/client dev",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md,yml,yaml}\""
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.6.0",
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@typescript-eslint/eslint-plugin": "^8.18.2",
+    "@typescript-eslint/parser": "^8.18.2",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.2"
+  }
+}
