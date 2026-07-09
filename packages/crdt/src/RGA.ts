@@ -1,15 +1,17 @@
 /**
  * Core RGA (Replicated Growable Array) structure for CollabText.
  *
- * WHY tombstones (`deleted: true`) instead of physical removal: a concurrent
+ * WHY tombstones (`deleted: true`) instead of physical deletion: a concurrent
  * insert may still name a deleted node as its `leftOrigin`. If we removed that
  * node from the sequence, replicas that apply the delete before vs after the
  * insert would place the new character differently (or fail to find the
  * anchor). Keeping the tombstone preserves a stable insertion anchor so every
  * replica converges to the same order. Visible text simply skips tombstones.
  *
- * Storage is a plain array with linear scans — intentionally O(n) for clarity.
- * A hashmap index is an optional later optimization, not required for correctness.
+ * Indexing: `indexById` maps Identifier → array index so leftOrigin / delete
+ * target lookup is O(1). The map is maintained on every splice (indices at or
+ * after the insertion point are incremented). Deletes only flip `deleted` and
+ * leave the map entry in place — the tombstone must remain addressable.
  */
 
 import { compareIdentifiers } from "./Identifier.js";
@@ -21,12 +23,21 @@ import type {
   Operation,
   RGANode,
 } from "./types.js";
-import { identifiersEqual } from "./types.js";
+
+/** Stable map key for an Identifier (objects cannot be Map keys by value). */
+export function identifierKey(id: Identifier): string {
+  return `${id.timestamp}:${id.clientId}`;
+}
 
 export class RGA {
   private readonly clientId: string;
   private readonly clock: LogicalClock;
   private readonly nodes: RGANode[] = [];
+  /**
+   * Identifier → current index in `nodes`.
+   * Gives O(1) leftOrigin / target lookup instead of scanning the array.
+   */
+  private readonly indexById = new Map<string, number>();
   /** Ops whose leftOrigin/target is not present yet (out-of-order delivery). */
   private readonly pending: Operation[] = [];
 
@@ -112,6 +123,14 @@ export class RGA {
   }
 
   /**
+   * O(1) index lookup used by insert/delete and by the Phase 5 benchmark.
+   * Returns -1 when the Identifier is not present.
+   */
+  lookupIndex(id: Identifier): number {
+    return this.findIndex(id);
+  }
+
+  /**
    * Identifier of the visible character immediately before a caret index,
    * or null when inserting at the start of the document.
    *
@@ -167,17 +186,11 @@ export class RGA {
   }
 
   private findIndex(id: Identifier): number {
-    for (let i = 0; i < this.nodes.length; i += 1) {
-      const node = this.nodes[i];
-      if (node && identifiersEqual(node.id, id)) {
-        return i;
-      }
-    }
-    return -1;
+    return this.indexById.get(identifierKey(id)) ?? -1;
   }
 
   private hasNode(id: Identifier): boolean {
-    return this.findIndex(id) !== -1;
+    return this.indexById.has(identifierKey(id));
   }
 
   /**
@@ -229,6 +242,20 @@ export class RGA {
     }
 
     this.nodes.splice(index, 0, node);
+    this.shiftIndexMapAfterInsert(index);
+    this.indexById.set(identifierKey(node.id), index);
+  }
+
+  /**
+   * After splicing at `index`, every existing map entry at or after that
+   * position must move one slot to the right so lookups stay accurate.
+   */
+  private shiftIndexMapAfterInsert(index: number): void {
+    for (const [key, existingIndex] of this.indexById) {
+      if (existingIndex >= index) {
+        this.indexById.set(key, existingIndex + 1);
+      }
+    }
   }
 
   private applyDelete(op: DeleteOperation): void {
@@ -241,6 +268,7 @@ export class RGA {
     if (node) {
       node.deleted = true;
     }
+    // Tombstone stays in `nodes` and in `indexById` — still a valid anchor.
     this.flushPending();
   }
 

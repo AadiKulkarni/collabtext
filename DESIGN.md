@@ -120,11 +120,21 @@ Cursor messages are ephemeral (not logged). Document ops are logged for hydrate
 on join/reconnect. Reconnect applies unseen log ops via `applyRemote`, then
 flushes the local outbox — no bespoke merge.
 
+## Phase 5 optimization (completed)
+
+`RGA` now maintains an `indexById: Map<string, number>` so `leftOrigin` /
+delete-target resolution is **O(1)** instead of an O(n) array scan. On insert,
+indices at or after the splice point are incremented so the map stays accurate;
+tombstones keep their map entries because they remain valid anchors.
+
+Measured on a 12,000-character document: hashmap lookups are ~280× faster than
+the linear baseline. Full numbers: [docs/benchmark-results.md](./docs/benchmark-results.md).
+
 ## What I'd change for production
 
-1. **O(n) linear scan** in `RGA` for `leftOrigin` lookup and walk-right —
-   replace with a hashmap `Identifier → index` (or a balanced tree) maintained
-   on insert/delete. Correctness unchanged; latency improves for large docs.
+1. **Sequence structure** — lookup is fixed; remaining per-insert cost is O(n)
+   `Array.splice` plus shifting the index map. A tree/rope keyed by Identifier
+   order would make placement and index maintenance logarithmic at 100k+ chars.
 2. **In-memory-only server log** — add periodic snapshots (e.g. Postgres) plus
    WAL-style replay so restarts do not lose history.
 3. **Single-document room** — introduce a `DocumentRoom` registry keyed by

@@ -17,4 +17,4 @@ export type {
 export { identifiersEqual, originsEqual } from "./types.js";
 export { compareIdentifiers } from "./Identifier.js";
 export { LogicalClock } from "./LogicalClock.js";
-export { RGA } from "./RGA.js";
+export { RGA, identifierKey } from "./RGA.js";

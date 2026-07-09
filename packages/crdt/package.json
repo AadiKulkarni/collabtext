@@ -15,10 +15,13 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "bench": "tsx bench/lookup.bench.ts"
   },
   "devDependencies": {
     "fast-check": "^3.23.1",
+    "tinybench": "^2.9.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
   }
