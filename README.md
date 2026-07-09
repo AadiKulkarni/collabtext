@@ -56,6 +56,7 @@ relay is not on localhost.
 pnpm test    # all workspaces
 pnpm lint
 pnpm build
+pnpm bench   # RGA lookup microbenchmark → docs/benchmark-results.md
 ```
 
 ## Tests worth reading
@@ -81,8 +82,11 @@ VITE_WS_URL=wss://your-server.example.com pnpm --filter @collabtext/client build
 
 ## Known limitations
 
-- RGA lookups are **O(n)** linear scans (clarity over speed). A hashmap index is
-  the natural next optimization (optional Phase 5).
+- **Identifier lookup is O(1)** via an `indexById` hashmap (Phase 5). Benchmarks
+  on a 12k-character document show ~**280×** faster lookups vs the previous
+  linear scan — see [docs/benchmark-results.md](./docs/benchmark-results.md).
+  The **next** bottleneck at larger scale is O(n) `Array.splice` + shifting the
+  index map on every insert; a tree/rope sequence would be the follow-up.
 - Server op log is **in-memory only** — process restart loses history.
 - Single document room (no multi-doc registry or auth yet).
 - Tombstones are never garbage-collected.

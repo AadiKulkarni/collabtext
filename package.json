@@ -8,6 +8,7 @@
     "test": "pnpm -r run test",
     "lint": "eslint --no-error-on-unmatched-pattern \"packages/*/src/**/*.{ts,tsx}\" \"packages/*/test/**/*.{ts,tsx}\"",
     "build": "pnpm -r run build",
+    "bench": "pnpm --filter @collabtext/crdt bench",
     "dev:server": "pnpm --filter @collabtext/server dev",
     "dev:client": "pnpm --filter @collabtext/client dev",
     "format": "prettier --write \"**/*.{ts,tsx,js,json,md,yml,yaml}\"",
