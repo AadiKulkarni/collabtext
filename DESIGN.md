@@ -120,9 +120,9 @@ Cursor messages are ephemeral (not logged). Document ops are logged for hydrate
 on join/reconnect. Reconnect applies unseen log ops via `applyRemote`, then
 flushes the local outbox — no bespoke merge.
 
-## Phase 5 optimization (completed)
+## Lookup optimization
 
-`RGA` now maintains an `indexById: Map<string, number>` so `leftOrigin` /
+`RGA` maintains an `indexById: Map<string, number>` so `leftOrigin` /
 delete-target resolution is **O(1)** instead of an O(n) array scan. On insert,
 indices at or after the splice point are incremented so the map stays accurate;
 tombstones keep their map entries because they remain valid anchors.

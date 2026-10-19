@@ -123,7 +123,7 @@ export class RGA {
   }
 
   /**
-   * O(1) index lookup used by insert/delete and by the Phase 5 benchmark.
+   * O(1) index lookup used by insert/delete and by the lookup benchmark.
    * Returns -1 when the Identifier is not present.
    */
   lookupIndex(id: Identifier): number {

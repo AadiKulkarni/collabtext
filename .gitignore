@@ -27,6 +27,15 @@ coverage/
 *.swp
 *.swo
 
+# AI / editor agent tooling (keep local; do not publish)
+.cursor/
+.cursorrules
+.cursorignore
+AGENTS.md
+CLAUDE.md
+.windsurfrules
+.github/copilot-instructions.md
+
 # Logs
 *.log
 npm-debug.log*

@@ -1,4 +1,6 @@
-# Demo assets
+# Docs assets
 
-Place `demo.gif` (under 5MB) and optional `architecture-diagram.png` here after
-recording the live sync / offline reconnect demo.
+Optional assets for the project README:
+
+- `demo.gif` — short recording of live sync and offline reconnect (keep under 5MB)
+- `architecture-diagram.png` — high-level system diagram
