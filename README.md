@@ -1,12 +1,11 @@
 # CollabText
 
+**Live demo:** <CLIENT_URL> (open in two tabs)
+
+<!-- ![Demo](docs/demo.gif) -->
+
 A from-scratch CRDT collaborative text editor — RGA algorithm, WebSocket relay,
 and React client — built as a systems/algorithms portfolio project.
-
-![Demo placeholder](docs/demo.gif)
-
-> Add `docs/demo.gif` after recording the two-tab sync → concurrent edit →
-> offline/reconnect sequence.
 
 ## Why this exists
 
@@ -82,10 +81,10 @@ VITE_WS_URL=wss://your-server.example.com pnpm --filter @collabtext/client build
 
 ## Known limitations
 
-- **Identifier lookup is O(1)** via an `indexById` hashmap (Phase 5). Benchmarks
-  on a 12k-character document show ~**280×** faster lookups vs the previous
-  linear scan — see [docs/benchmark-results.md](./docs/benchmark-results.md).
-  The **next** bottleneck at larger scale is O(n) `Array.splice` + shifting the
+- **Identifier lookup is O(1)** via an `indexById` hashmap. Benchmarks on a
+  12k-character document show ~**280×** faster lookups vs the previous linear
+  scan — see [docs/benchmark-results.md](./docs/benchmark-results.md). The
+  **next** bottleneck at larger scale is O(n) `Array.splice` + shifting the
   index map on every insert; a tree/rope sequence would be the follow-up.
 - Server op log is **in-memory only** — process restart loses history.
 - Single document room (no multi-doc registry or auth yet).
