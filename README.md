@@ -1,6 +1,8 @@
 # CollabText
 
-**Live demo:** <CLIENT_URL> (open in two tabs)
+**Live demo:** https://collabtext-kappa.vercel.app (open in two tabs)
+
+*Free-tier server: first load may take ~30s to wake up.*
 
 <!-- ![Demo](docs/demo.gif) -->
 
@@ -68,21 +70,20 @@ pnpm bench   # RGA lookup microbenchmark → docs/benchmark-results.md
 
 ## Deploy
 
-Server image: `packages/server/Dockerfile` (reads `PORT`, default `8080`).
-Client: Vite build with `VITE_WS_URL` pointing at the deployed `wss://` relay.
+**Server (Render):** Web Service from this repo. Use Docker with
+`packages/server/Dockerfile` and set the Docker build context to the **repo
+root** (the Dockerfile copies workspace files from there). Render sets `PORT`;
+the server reads it (default `8080`). Prefer the `wss://` URL Render gives you
+for the client env var below.
+
+**Client (Vercel):** Deploy from the repo root (`vercel.json` builds
+`@collabtext/client...` and outputs `packages/client/dist`). Set `VITE_WS_URL`
+in the Vercel project env to your Render WebSocket URL (e.g.
+`wss://your-service.onrender.com`).
 
 ```bash
-# 1) Relay on Fly.io (from repo root; uses fly.toml → packages/server/Dockerfile)
-fly apps create collabtext-relay   # once
-fly deploy
-
-# 2) Client on Vercel (repo root uses vercel.json; set VITE_WS_URL in the project env)
-vercel link                           # once
-vercel env add VITE_WS_URL production # e.g. wss://collabtext-relay.fly.dev
-vercel --prod
-
-# Local production client build (optional)
-VITE_WS_URL=wss://collabtext-relay.fly.dev pnpm --filter @collabtext/client build
+# Optional: local production client build against a deployed relay
+VITE_WS_URL=wss://your-service.onrender.com pnpm --filter "@collabtext/client..." build
 ```
 
 If the Vercel project Root Directory is `packages/client`, that package’s
