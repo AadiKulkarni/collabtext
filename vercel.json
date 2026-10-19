@@ -2,6 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
   "installCommand": "pnpm install",
-  "buildCommand": "pnpm --filter @collabtext/client build",
+  "buildCommand": "pnpm --filter \"@collabtext/client...\" build",
   "outputDirectory": "packages/client/dist"
 }
