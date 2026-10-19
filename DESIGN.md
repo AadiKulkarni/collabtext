@@ -29,9 +29,8 @@ Among sequence CRDTs:
   inserts after the same origin are ordered by comparing Identifiers. Deletes
   are tombstones so anchors remain stable.
 
-RGA is a strong interview story: the walk-right insertion rule is short enough
-to explain on a whiteboard, and tombstones make the concurrent-delete-vs-insert
-case intuitive.
+The walk-right insertion rule is short enough to reason about by hand, and
+tombstones make the concurrent-delete-vs-insert case intuitive.
 
 ## Algorithm walkthrough
 

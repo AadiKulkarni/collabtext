@@ -6,14 +6,14 @@
 
 <!-- ![Demo](docs/demo.gif) -->
 
-A from-scratch CRDT collaborative text editor — RGA algorithm, WebSocket relay,
-and React client — built as a systems/algorithms portfolio project.
+A from-scratch CRDT collaborative text editor: RGA algorithm, WebSocket relay,
+and React client.
 
 ## Why this exists
 
-Interviewers ask how collaborative editors stay consistent under concurrency and
-partitions. CollabText answers with a real implementation: a pure TypeScript RGA
-in `packages/crdt` (no Yjs/Automerge), a dumb relay server, and a client that
+Collaborative editors have to stay consistent under concurrent edits and network
+partitions. CollabText does this with a real implementation: a pure TypeScript
+RGA in `packages/crdt` (no Yjs/Automerge), a dumb relay server, and a client that
 trusts CRDT convergence on reconnect instead of special-case merge code.
 
 ## Features
